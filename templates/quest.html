@@ -82,7 +82,7 @@
 					<td class="first name">
 						<div>
 							<a name="quest_$quest.id" href="${quest.walkthrough and 'walkthrough/'+str(quest.id) or None}">$quest.name</a>
-							<a py:if="authed and not quest.walkthrough" class="direct" href="walkthrough/edit/$quest.id">e</a>
+							<a py:if="not quest.walkthrough" class="direct" href="walkthrough/edit/$quest.id">e</a>
 							<a class="direct" href="#quest_$quest.id">#</a>
 						</div>
 					</td>
