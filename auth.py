@@ -48,10 +48,11 @@ def get_current_privs():
 
 # add users from configfile
 conf = cf.parse(configfile)
-users = conf.s("users") or []
-for user in users.l()['sections']:
-	current = users.s(user)
-	set_pass(user, current.v("password"))
-	privileges_dict = current.v("privs") or {}
-	for key in privileges_dict:
-		set_priv(user, key, privileges_dict[key])
+users = conf.s("users")
+if users != None:
+	for user in users.l()['sections']:
+		current = users.s(user)
+		set_pass(user, current.v("password"))
+		privileges_dict = current.v("privs") or {}
+		for key in privileges_dict:
+			set_priv(user, key, privileges_dict[key])
