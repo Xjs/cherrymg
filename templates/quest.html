@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/">
+<?python count = 0 ?>
+	<head>
+		<title>Quests.</title>
+		<style type="text/css">
+			table
+			{
+				border-spacing:0px;
+			}
+			tr.solved, tr.solved a
+			{
+				color: green;
+			}
+			tr.pending, tr.pending a
+			{
+				color: #dd0000;
+			}
+			tr a.direct
+			{
+				color:blue;
+				opacity:0.5;
+				font-size:.7em;
+				text-decoration:none;
+			}
+			tr a.direct:hover
+			{
+				opacity:0.9;
+			}
+			th, td
+			{
+				border-right:1px solid black;
+				margin-left:0px;
+				margin-right:0px;
+				padding-left:10px;
+				padding-right:10px;
+			}
+			th.last, td.last
+			{
+				border-right: 0px solid black;
+			}
+			td div
+			{
+				margin-top:2px;
+				margin-bottom:2px;
+			}
+			tr.gray
+			{
+				background-color: #dddddd;
+			}
+			th
+			{
+				text-align:left;
+				border-bottom:1px solid #dddddd;
+				border-top:1px solid #dddddd;
+				background-color: #eeeeee;
+				padding-top: 5px;
+				padding-bottom: 5px;
+			}
+			td.attr.none
+			{
+				font-size:.5em;
+				color:silver;
+			}
+			td.attr.none:after
+			{
+			}
+		</style>
+	</head>
+	<body class="index">
+		<h1>Questliste</h1>
+		<table cellspacing="0">
+			<thead>
+				<th class="first name">Name</th>
+				<th class="ap">Abenteuerpunkte</th>
+				<th class="cl">Klasse</th>
+				<th class="attr">Attribut</th>
+				<th class="level">Stufe</th>
+				<th class="mage last">Verantwortlicher Magier</th>
+			</thead>
+			<tbody>
+				<tr py:for="quest in quests" class="${quest.solved and 'solved' or 'pending'} ${(count % 2) and 'gray' or 'white'}">
+					<td class="first name">
+						<div>
+							<a name="quest_$quest.id" href="${quest.walkthrough and 'walkthrough/'+str(quest.id) or None}">$quest.name</a>
+							<a py:if="authed and not quest.walkthrough" class="direct" href="walkthrough/edit/$quest.id">e</a>
+							<a class="direct" href="#quest_$quest.id">#</a>
+						</div>
+					</td>
+					<td class="ap"><div>$quest.ap</div></td>
+					<td class="cl"><div>${"&#x2605;" * quest.cl}</div></td>
+					<td class="attr ${quest.attr or 'none'}"><div>$quest.attr</div></td>
+					<td class="level"><div>$quest.level</div></td>
+					<td class="mage last"><div>$quest.mage</div></td>
+					<?python count += 1 ?>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

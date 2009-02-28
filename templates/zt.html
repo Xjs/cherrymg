@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/">
+	<head>
+		<title>ZT.</title>
+		<style type="text/css">
+			.comment
+			{
+				margin-left:4em;
+				max-width:36em;
+				color:gray;
+			}
+			pre
+			{
+				font-size:1.2em;
+			}
+			pre a
+			{
+				font-family:"Optima" sans-serif;
+				font-size:0.6em;
+				text-decoration:none;
+			}
+			
+			.solved, .solved .comment
+			{
+				color:green;
+				margin-left:4em;
+			}
+			
+		</style>
+	</head>
+	<body class="index">
+		<ol py:if="zt">
+			<li py:for="poem in zt" py:if="not poem.solved or showsolved" class="${poem.solved and 'solved' or None}">
+				<pre><a href="oneliner/$poem.id">o</a> $poem.data</pre>
+				<p class="comment" py:if="poem.comment">$poem.comment</p>
+			</li>
+		</ol>
+	</body>
+</html>

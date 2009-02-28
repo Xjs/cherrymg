@@ -1,0 +1,83 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/">
+	<head>
+		<title>Walkthrough f&uuml;r $quest.name</title>
+		<style type="text/css">
+			/* <![CDATA[ */
+			h1
+			{
+				font-size:1.5em;
+				display:block;
+				border-bottom:1px dashed silver;
+				margin-bottom:0px;
+			}
+			ul
+			{
+				margin-top:8px;
+				list-style-type:none;
+				font-size:0.9em;
+				border-bottom:2px solid darkgray;
+				padding-bottom:8px;
+			}
+
+			li
+			{
+				margin-left:-10px;
+			}
+			li strong
+			{
+				display:block;
+				float:left;
+				width:14em;
+				
+				margin-right:10px;
+				text-align: right;
+				
+				color: gray;
+			}
+			li#stop
+			{
+				margin-bottom:7px;
+			}
+			
+			span#edit
+			{
+				font-size: 0.5em;
+				font-weight: normal;
+			}
+			span#edit a
+			{
+				color: blue;
+				text-decoration: none;
+				opacity: 0.5;
+			}
+			span#edit a:hover
+			{
+				opacity: 0.9;
+			}
+			
+			pre
+			{
+				font-size:1.1em;
+				/* Ugly, dirty hack for making the <pre> wrap */
+				white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+				white-space: -pre-wrap; /* Opera 4 - 6 */
+				white-space: -o-pre-wrap; /* Opera 7 */
+				white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+				word-wrap: break-word; /* IE 5.5+ */
+			}
+			/* ]]> */
+		</style>
+	</head>
+	<body class="index">
+		<h1>Walkthrough f&uuml;r $quest.name
+			<span id="edit"><a py:if="authed" href="/mg/quests/walkthrough/edit/$quest.id">[bearbeiten]</a></span></h1>
+		<ul>
+			<li><strong>Abenteuerpunkte</strong><span>$quest.ap</span></li>
+			<li id="stop"><strong>Empfohlene Stufe</strong><span>$quest.level</span></li>
+			<li><strong>Klasse</strong><span>${"&#x2605;" * quest.cl}</span></li>
+			<li py:if="quest.attr"><strong>Attribut</strong><span>$quest.attr</span></li>
+			<li><strong>Verantwortlicher Magier</strong><span>$quest.mage</span></li>
+		</ul>
+		<pre>$walkthrough</pre>
+	</body>
+</html>
