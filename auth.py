@@ -59,11 +59,12 @@ def get_realm_hash(environ, user_name, realm):
 
 ANONYMOUS = None
 def current_user():
-    "get authorization from apache/lighttpd/squid"
+    "Get authorisation from HTTP header information."
     try:
-        hdr = cherrypy.request.headers['Authorization']
-        start = hdr.find('Digest username="')
-        end = hdr.find('"', start+17)
-        return hdr[start+17:end]
+        header = cherrypy.request.headers['Authorization']
+        length = 17 # length of 'Digest username="'
+        start = header.find('Digest username="')
+        end = header.find('"', start+length)
+        return header[start+length:end]
     except KeyError:
         return ANONYMOUS
