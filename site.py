@@ -15,6 +15,8 @@ def make_couchdb_server(url, username=None, password=None):
     # TODO: implement authentication
     return Server(url)
     
+class _Empty(object):
+    pass
 
 class ZT(object):
     def __init__(self, data, comment = "", solved = False):
@@ -60,10 +62,11 @@ class BaseSite(object):
             self.config['url'],
             self.config['user'],
             self.config['password'])
-        self.quests = map(self.server[self.config['database']['quests']])
-        self.quests.add(Quest)
-        self.zt = map(self.server[self.config['database']['zt']])
-        self.zt.add(ZT)
+        self.db = _Empty()
+        self.db.quests = map(self.server[self.config['database']['quests']])
+        self.db.quests.add(Quest)
+        self.db.zt = map(self.server[self.config['database']['zt']])
+        self.db.zt.add(ZT)
         
     def content_type(self):
         xhtml = "application/xhtml+xml"
@@ -79,13 +82,13 @@ class ZTSite(InheritingSite):
     def index(self, showsolved = None):
         self.base.content_type()
         tmpl = self.base.loader.load("zt.html")
-        return tmpl.generate(zt=self.base.zt.all_docs(), showsolved=showsolved=="showsolved").render('xhtml', doctype='xhtml')
+        return tmpl.generate(zt=self.base.db.zt.all_docs(), showsolved=showsolved=="showsolved").render('xhtml', doctype='xhtml')
     index.exposed = True
     def oneliner(self, id=None):
         if id is None:
             return "Which poem?"
         try:
-            poem = self.base.zt[id]
+            poem = self.base.db.zt[id]
         except ResourceNotFound:
             return "No such poem."
         else:
@@ -107,7 +110,7 @@ class QuestSite(InheritingSite):
             
         def get_quest(self, id):
             try:
-                quest = self.base.quests[id]
+                quest = self.base.db.quests[id]
             except ResourceNotFound:
                 return False
             else:
@@ -139,7 +142,7 @@ class QuestSite(InheritingSite):
                 quest.solved = bool(text) # returns True if text is not ""
                 if text == "":
                     quest.solved = bool(solved)
-                self.base.quests.save(quest)
+                self.base.db.quests.save(quest)
                 return "Entered data. "+self.backlink(id) #TODO nicer
             else:
                 self.base.content_type()
@@ -168,9 +171,9 @@ class QuestSite(InheritingSite):
         self.base.content_type()
         
         try:
-            quests = self.base.quests.view('/'.join(['by', order_by]))
+            quests = self.base.db.quests.view('/'.join(['by', order_by]))
         except ResourceNotFound:
-            quests = self.base.quests.all_docs()
+            quests = self.base.db.quests.all_docs()
         
         tmpl = self.base.loader.load("quest.html")
         return tmpl.generate(quests=quests, authed=self.walkthrough.is_authed()).render('xhtml', doctype='xhtml')
