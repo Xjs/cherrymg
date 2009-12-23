@@ -67,6 +67,10 @@ class BaseSite(object):
         self.db.quests.add(Quest)
         self.db.zt = map(self.server[self.config['database']['zt']])
         self.db.zt.add(ZT)
+        self.loader = TemplateLoader(
+            os.path.join(os.path.dirname(__file__), 'templates'),
+            auto_reload=True
+        )
         
     def content_type(self):
         xhtml = "application/xhtml+xml"
