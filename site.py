@@ -83,10 +83,10 @@ class InheritingSite(object):
         self.base = base
         
 class ZTSite(InheritingSite):
-    def index(self, showsolved = None):
+    def index(self, showsolved=None):
         self.base.content_type()
         tmpl = self.base.loader.load("zt.html")
-        return tmpl.generate(zt=self.base.db.zt.all_docs(include_docs=True), showsolved=showsolved=="showsolved").render('xhtml', doctype='xhtml')
+        return tmpl.generate(zt=self.base.db.zt.all_docs(include_docs=True), showsolved=bool(showsolved)).render('xhtml', doctype='xhtml')
     index.exposed = True
     def oneliner(self, id=None):
         if id is None:
