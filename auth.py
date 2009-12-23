@@ -25,8 +25,8 @@ except KeyError:
 config = config['couch']
 
 class User(object):
-    def __init__(self, name, password, privileges):
-        self.name = name
+    def __init__(self, _id, password, privileges):
+        self._id = _id
         self.password = password
         self.privileges = privileges
 
@@ -35,14 +35,25 @@ db_name = config['database']['users']
 users = map(server[db_name])
 users.add(User)
 
-def get_realm_hash(environ, user, realm):
-    print >>f, "trying to authenticate user", user
-    value = md5()
+def get_realm_hash(environ, user_name, realm):
     try:
         # user:realm:password
-        value.update(user+":"+realm+":"+users[user].password)
-        hash = value.hexdigest()
-        return hash
+        user = users[user_name]
+        try:
+            return user.hashes[realm]
+        except (KeyError, AttributeError):
+            value = md5()
+            try:
+                value.update(':'.join([user_name, realm, user.password]))
+            except AttributeError:
+                return None
+            hash = value.hexdigest()
+            try:
+                user.hashes[realm] = hash
+            except AttributeError:
+                user.hashes = {realm: hash}
+            users[user_name] = user
+            return hash
     except ResourceNotFound:
         return None
 

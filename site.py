@@ -19,7 +19,7 @@ class _Empty(object):
     pass
 
 class ZT(object):
-    def __init__(self, data, comment = "", solved = False):
+    def __init__(self, data, comment="", solved=False):
         self.data = data
         self.comment = comment
         self.solved = solved
@@ -86,7 +86,7 @@ class ZTSite(InheritingSite):
     def index(self, showsolved = None):
         self.base.content_type()
         tmpl = self.base.loader.load("zt.html")
-        return tmpl.generate(zt=self.base.db.zt.all_docs(), showsolved=showsolved=="showsolved").render('xhtml', doctype='xhtml')
+        return tmpl.generate(zt=self.base.db.zt.all_docs(include_docs=True), showsolved=showsolved=="showsolved").render('xhtml', doctype='xhtml')
     index.exposed = True
     def oneliner(self, id=None):
         if id is None:
@@ -108,8 +108,8 @@ class QuestSite(InheritingSite):
         def is_authed(self):
             "Return if the user doing the current request is authenticated"
             try:
-                return auth.users[current_user()].privilebes['walkthrough']
-            except (ResourceNotFound, KeyError):
+                return auth.users[current_user()].privileges['walkthrough']
+            except (ResourceNotFound, KeyError, AttributeError):
                 return False
             
         def get_quest(self, id):
@@ -133,9 +133,9 @@ class QuestSite(InheritingSite):
             if not quest: # None or False
                 return "No such quest." # TODO: nicer
             walkthrough = ""
-            if quest.walkthrough:
+            if hasattr(quest, 'walkthrough') and quest.walkthrough:
                 walkthrough = quest.walkthrough
-            if text or text == "":
+            if text:
                 if type(text) == str:
                     quest.walkthrough = text.decode("utf-8")
                     # must be utf8 as content_type() delivers the form as utf8
@@ -143,15 +143,22 @@ class QuestSite(InheritingSite):
                     quest.walkthrough = text
                 else:
                     return "Data not entered. "+self.backlink(id) #TODO nicer
-                quest.solved = bool(text) # returns True if text is not ""
-                if text == "":
-                    quest.solved = bool(solved)
-                self.base.db.quests.save(quest)
+                quest.solved = solved
+                self.base.db.quests.save_doc(quest)
                 return "Entered data. "+self.backlink(id) #TODO nicer
+            elif text == "":
+                if solved != quest.solved:
+                    quest.solved = solved
+                try:
+                    del(quest.walkthrough)
+                except AttributeError:
+                    pass
+                self.base.db.quests.save_doc(quest)
+                return "Changed data. "+self.backlink(id) #TODO nicer
             else:
                 self.base.content_type()
                 tmpl = self.base.loader.load("walkthrough/edit.html")
-                return tmpl.generate (quest=quest, walkthrough=quest.walkthrough, authed=self.is_authed()).render('xhtml', doctype='xhtml')
+                return tmpl.generate (quest=quest, walkthrough=walkthrough, authed=self.is_authed()).render('xhtml', doctype='xhtml')
         edit.exposed = True
         
         def default(self, id=None):
@@ -170,14 +177,14 @@ class QuestSite(InheritingSite):
         self.walkthrough = self.WalkthroughSite(self)
         self.walkthrough.exposed = True
     
-    def index(self, order_by="id"):
+    def index(self, order_by="level"):
         # TODO: make views!
         self.base.content_type()
         
         try:
             quests = self.base.db.quests.view('/'.join(['by', order_by]))
         except ResourceNotFound:
-            quests = self.base.db.quests.all_docs()
+            quests = self.base.db.quests.all_docs(include_docs=True)
         
         tmpl = self.base.loader.load("quest.html")
         return tmpl.generate(quests=quests, authed=self.walkthrough.is_authed()).render('xhtml', doctype='xhtml')

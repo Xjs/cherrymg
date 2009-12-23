@@ -70,12 +70,12 @@
 	</head>
 	<body class="index">
 		<h1>Walkthrough f&uuml;r $quest.name
-			<span id="edit"><a py:if="authed" href="/mg/quests/walkthrough/edit/$quest.id">[bearbeiten]</a></span></h1>
+			<span id="edit"><a py:if="authed" href="/mg/quests/walkthrough/edit/$quest._id">[bearbeiten]</a></span></h1>
 		<ul>
-			<li><strong>Abenteuerpunkte</strong><span>$quest.ap</span></li>
+			<li><strong>Abenteuerpunkte</strong><span>$quest.points</span></li>
 			<li id="stop"><strong>Empfohlene Stufe</strong><span>$quest.level</span></li>
-			<li><strong>Klasse</strong><span>${"&#x2605;" * quest.cl}</span></li>
-			<li py:if="quest.attr"><strong>Attribut</strong><span>$quest.attr</span></li>
+			<li><strong>Klasse</strong><span>${"&#x2605;" * quest.class_}</span></li>
+			<li py:if="hasattr(quest, 'attribute')"><strong>Attribut</strong><span>$quest.attribute</span></li>
 			<li><strong>Verantwortlicher Magier</strong><span>$quest.mage</span></li>
 		</ul>
 		<pre>$walkthrough</pre>

@@ -72,10 +72,10 @@ current = False ?>
 		<h1>Questliste</h1>
 		<table cellspacing="0">
 			<thead>
-				<th class="first name">Name</th>
-				<th class="ap">Abenteuerpunkte</th>
-				<th class="cl">Klasse</th>
-				<th class="attr">Attribut</th>
+				<th class="name first">Name</th>
+				<th class="points">Abenteuerpunkte</th>
+				<th class="class">Klasse</th>
+				<th class="attribute">Attribut</th>
 				<th class="level">Stufe</th>
 				<th class="mage last">Verantwortlicher Magier</th>
 			</thead>
@@ -83,14 +83,14 @@ current = False ?>
 				<tr py:for="quest in quests" class="${quest.solved and 'solved' or 'pending'} ${color[current]}">
 					<td class="first name">
 						<div>
-							<a name="quest_$quest.id" href="${quest.walkthrough and 'walkthrough/'+str(quest.id) or None}">$quest.name</a>
-							<a py:if="not quest.walkthrough" class="direct" href="walkthrough/edit/$quest.id">e</a>
-							<a class="direct" href="#quest_$quest.id">#</a>
+							<a name="quest_$quest._id" href="${hasattr(quest, 'walkthrough') and 'walkthrough/'+str(quest._id) or None}">$quest.name</a>
+							<a py:if="not hasattr(quest, 'walkthrough')" class="direct" href="walkthrough/edit/$quest._id">e</a>
+							<a class="direct" href="#quest_$quest._id">#</a>
 						</div>
 					</td>
-					<td class="ap"><div>$quest.ap</div></td>
-					<td class="cl"><div>${"&#x2605;" * quest.cl}</div></td>
-					<td class="attr ${quest.attr or 'none'}"><div>$quest.attr</div></td>
+					<td class="points"><div>$quest.points</div></td>
+					<td class="class"><div>${"&#x2605;" * quest.class_}</div></td>
+					<td class="attribute ${hasattr(quest, 'attribute') and quest.attribute or 'none'}"><div>${hasattr(quest, 'attribute') and quest.attribute or ''}</div></td>
 					<td class="level"><div>$quest.level</div></td>
 					<td class="mage last"><div>$quest.mage</div></td>
 					<?python current = not current ?>
