@@ -83,11 +83,22 @@ class InheritingSite(object):
         self.base = base
         
 class ZTSite(InheritingSite):
-    def index(self, showsolved=None):
+    def zt_list(self, show_solved):
         self.base.content_type()
         tmpl = self.base.loader.load("zt.html")
-        return tmpl.generate(zt=self.base.db.zt.all_docs(include_docs=True), showsolved=bool(showsolved)).render('xhtml', doctype='xhtml')
-    index.exposed = True
+        return tmpl.generate(
+                zt=self.base.db.zt.all_docs(include_docs=True),
+                showsolved=show_solved
+            ).render('xhtml', doctype='xhtml')
+    
+    @cherrypy.expose
+    def index(self):
+        return self.zt_list(show_solved=False)
+    
+    @cherrypy.expose
+    def showsolved(self):
+        return self.zt_list(show_solved=True)
+
     def oneliner(self, id=None):
         if id is None:
             return "Which poem?"
