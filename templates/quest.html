@@ -1,5 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/">
-<?python count = 0 ?>
+<?python
+color = {True: 'gray', False: 'white'}
+current = False ?>
 	<head>
 		<title>Quests.</title>
 		<style type="text/css">
@@ -78,7 +80,7 @@
 				<th class="mage last">Verantwortlicher Magier</th>
 			</thead>
 			<tbody>
-				<tr py:for="quest in quests" class="${quest.solved and 'solved' or 'pending'} ${(count % 2) and 'gray' or 'white'}">
+				<tr py:for="quest in quests" class="${quest.solved and 'solved' or 'pending'} ${color[current]}">
 					<td class="first name">
 						<div>
 							<a name="quest_$quest.id" href="${quest.walkthrough and 'walkthrough/'+str(quest.id) or None}">$quest.name</a>
@@ -91,7 +93,7 @@
 					<td class="attr ${quest.attr or 'none'}"><div>$quest.attr</div></td>
 					<td class="level"><div>$quest.level</div></td>
 					<td class="mage last"><div>$quest.mage</div></td>
-					<?python count += 1 ?>
+					<?python current = not current ?>
 				</tr>
 			</tbody>
 		</table>
